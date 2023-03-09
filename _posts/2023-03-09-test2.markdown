@@ -1,15 +1,15 @@
 ---
-title: "코딩 공부 1일차 2"
+title: "Markdown Extra Components"
 layout: post
-date: 2023-03-09 17:24
+date: 2018-02-24 22:48
 image: /assets/images/markdown.jpg
 headerImage: false
 tag:
-- c
-- c++
-star: true
+- markdown
+- components
+- extra
 category: blog
-author: ByeoungChanKim
+author: jamesfoster
 description: Markdown summary with different options
 ---
 
