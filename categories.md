@@ -1,6 +1,6 @@
 ---
-layout: categories
-title: Categories
+layout: archive-taxonomies
 permalink: /categories/
-robots: noindex
+title: Categories
+type: categories
 ---
