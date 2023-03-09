@@ -28,7 +28,7 @@ MSB : Most Significant Bit
   11111011 1의 보수 = (0을 뒤집는것)
   2의 보수를 구하는법 = 1의 보수에서 1을 더한다
 
-{% highlight html %}
+{% highlight c %}
 #include <iostream>
 
 #define FULLSCREEN 32
@@ -58,7 +58,7 @@ int main()
     printf("2 << 2: %d\n", 2 << 2);
     printf("10 << 1: %d\n", 10 >> 1);
 }
-{% highlight html %}
+{% endhighlight %}
 ![Markdown Image][Test]
 
 
