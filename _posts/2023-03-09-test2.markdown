@@ -30,6 +30,37 @@ MSB : Most Significant Bit
 ![Markdown Image][Test]
 
 
+{% highlight c %}
+#include <iostream>
+
+#define FULLSCREEN 32
+enum EOptions { kBGM = 4, kFULLSCREEN = 32 };
+
+
+int main()
+{
+    int lhs = 4; //Left-Hand Side
+    int rhs = 2; //Right - Hand Side
+    printf("lhs & rhs: %d\n", lhs & rhs);  // AND
+    printf("lhs | rhs: %d\n", lhs | rhs);  // OR
+    printf("lhs ^ rhs: %d\n", lhs ^ rhs);  // XOR
+    printf("lhs : rhs: %d\n", ~lhs);      // NOT]
+
+    unsigned char options = 0;
+    options |= kBGM | FULLSCREEN; 
+    printf("options: %d\n", options);
+    // 00100100
+
+    printf("kBGM is enable: %s\n",
+        (options & kBGM) > 0 ? "T" : "F");
+    options ^= FULLSCREEN;
+    printf("options: %d\n", options);
+
+    // Shift Operator
+    printf("2 << 2: %d\n", 2 << 2);
+    printf("10 << 1: %d\n", 10 >> 1);
+}
+{% endhighlight %}
 
 
 [Test]: /assets/images/profile.jpg
