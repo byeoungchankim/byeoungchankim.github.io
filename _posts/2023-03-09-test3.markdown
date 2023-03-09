@@ -9,6 +9,7 @@ tag:
 - c++
 star: true
 category: blog
+author: kim
 description: Markdown summary with different options
 ---
 
