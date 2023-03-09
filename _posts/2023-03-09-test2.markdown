@@ -14,7 +14,6 @@ description: Markdown summary with different options
 ---
 
 
-2023년 3월 9일
 MSB : Most Significant Bit
 
 4를 표현 하고 싶으면 00000100
