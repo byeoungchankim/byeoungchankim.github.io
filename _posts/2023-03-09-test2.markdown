@@ -1,5 +1,5 @@
 ---
-title: "Markdown Extra Components"
+title: "Markdown Extra 2"
 layout: post
 date: 2018-02-24 22:48
 image: /assets/images/markdown.jpg
