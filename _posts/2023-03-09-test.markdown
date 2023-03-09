@@ -8,6 +8,8 @@ tag:
 - 블로깅
 star: true
 category: blog
+author: johndoe
+description: Markdown summary with different options
 ---
 
 
