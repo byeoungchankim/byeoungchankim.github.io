@@ -1,12 +1,12 @@
 ---
-title: "wow"
+title: "코딩 공부 1일차"
 layout: post
 date: 2023-02-24 22:44
 image: /assets/images/markdown.jpg
 headerImage: false
 tag:
-- markdown
-- elements
+- c
+- c++
 star: true
 category: blog
 author: johndoe
@@ -15,3 +15,6 @@ description: Markdown summary with different options
 
 
 헬로월드 업데이트
+
+![Markdown Image][/assets/images/profile.jpg]
+
