@@ -9,7 +9,7 @@ tag:
 - c++
 star: true
 category: blog
-author: ByeoungChanKim
+author: jamesfoster
 description: Markdown summary with different options
 ---
 
