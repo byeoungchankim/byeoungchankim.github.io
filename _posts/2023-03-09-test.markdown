@@ -16,5 +16,9 @@ description: Markdown summary with different options
 
 헬로월드 업데이트
 
-![Markdown Image][/assets/images/profile.jpg]
+![Markdown Image][Test]
 
+
+
+
+[Test]: /assets/images/profile.jpg
