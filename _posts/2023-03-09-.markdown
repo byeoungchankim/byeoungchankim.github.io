@@ -1,20 +1,19 @@
 ---
-title: "코딩 공부 1일차"
+title: "Markdown Extra 2"
 layout: post
-date: 2023-03-09 17:24
+date: 2023-03-10 18:48
 image: /assets/images/markdown.jpg
 headerImage: false
 tag:
-- c
-- c++
-star: true
+- markdown
+- components
+- extra
 category: blog
 author: jamesfoster
 description: Markdown summary with different options
 ---
 
 
-2023년 3월 9일
 MSB : Most Significant Bit
 
 4를 표현 하고 싶으면 00000100
@@ -27,6 +26,9 @@ MSB : Most Significant Bit
   00000100  4  
   11111011 1의 보수 = (0을 뒤집는것)
   2의 보수를 구하는법 = 1의 보수에서 1을 더한다
+
+![Markdown Image][Test]
+
 
 {% highlight c %}
 #include <iostream>
@@ -59,9 +61,6 @@ int main()
     printf("10 << 1: %d\n", 10 >> 1);
 }
 {% endhighlight %}
-![Markdown Image][Test]
-
-
 
 
 [Test]: /assets/images/profile.jpg

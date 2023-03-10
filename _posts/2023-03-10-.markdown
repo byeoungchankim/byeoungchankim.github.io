@@ -1,34 +1,20 @@
 ---
-title: "Markdown Extra 2"
+title: "코딩 공부 1일차"
 layout: post
-date: 2018-02-24 22:48
+date: 2023-03-10 09:20
 image: /assets/images/markdown.jpg
 headerImage: false
 tag:
-- markdown
-- components
-- extra
+- c
+- cpp
+star: true
 category: blog
 author: jamesfoster
 description: Markdown summary with different options
 ---
 
 
-MSB : Most Significant Bit
-
-4를 표현 하고 싶으면 00000100
--4를 표현 하고 싶으면 10000100
-
-비트단위로 덧셈을 할려면 자리수 대로 덧셈을 하면 된다
-00000100 + 10000100 = 10001000
-
-컴퓨터가 음수를 나타내는 방법은 2의 보수법 
-  00000100  4  
-  11111011 1의 보수 = (0을 뒤집는것)
-  2의 보수를 구하는법 = 1의 보수에서 1을 더한다
-
-![Markdown Image][Test]
-
+2023년 3월 10일
 
 {% highlight c %}
 #include <iostream>
@@ -61,6 +47,6 @@ int main()
     printf("10 << 1: %d\n", 10 >> 1);
 }
 {% endhighlight %}
+![Markdown Image][Test]
 
 
-[Test]: /assets/images/profile.jpg
