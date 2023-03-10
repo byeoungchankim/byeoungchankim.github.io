@@ -1,5 +1,5 @@
 ---
-title: "코딩 공부 1일차 dd"
+title: "코딩 공부 1일차"
 layout: post
 date: 2023-03-09 17:24
 image: /assets/images/markdown.jpg
