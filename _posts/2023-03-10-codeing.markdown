@@ -1,13 +1,13 @@
 ---
-title: "Markdown Extra 2"
+title: "코딩연습 2일차"
 layout: post
 date: 2023-03-10 18:48
 image: /assets/images/markdown.jpg
 headerImage: false
 tag:
-- markdown
-- components
-- extra
+- c
+- 
+- 
 category: blog
 author: jamesfoster
 description: Markdown summary with different options
