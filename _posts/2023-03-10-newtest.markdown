@@ -1,7 +1,7 @@
 ---
 title: "코딩 공부 2일차"
 layout: post
-date: 2023-03-10 10:02
+date: 2023-03-10 09:02
 image: /assets/images/markdown.jpg
 headerImage: false
 tag:
@@ -16,37 +16,99 @@ description: Markdown summary with different options
 
 2023년 3월 10일
 
-실험중 
+* = 주소를 저장하는 변수 즉 pointer 
+
+
 
 {% highlight c %}
-#include <iostream>
+#include <stdio.h>
 
-#define FULLSCREEN 32
-enum EOptions { kBGM = 4, kFULLSCREEN = 32 };
+void SometingFunc();
 
+int g_iVal;
+int m_iVal;
 
 int main()
 {
-    int lhs = 4; //Left-Hand Side
-    int rhs = 2; //Right - Hand Side
-    printf("lhs & rhs: %d\n", lhs & rhs);  // AND
-    printf("lhs | rhs: %d\n", lhs | rhs);  // OR
-    printf("lhs ^ rhs: %d\n", lhs ^ rhs);  // XOR
-    printf("lhs : rhs: %d\n", ~lhs);      // NOT]
+	//Array
+	int arr[3] = { 1, 2, 3 };
+	printf("arr Size: %d byte\n", sizeof(arr));
+	printf("arr Address: %p\n", arr);
+	for (int i = 0; i < 3; ++i)
+	{
+		printf("arr[%d]: %d(%p)\n", i, arr[i], &arr[i]);
+		printf("*(arr + %d): %d(%p)\n",
+			i,
+			*(arr + i),
+			arr + i);
+	}
 
-    unsigned char options = 0;
-    options |= kBGM | FULLSCREEN; 
-    printf("options: %d\n", options);
-    // 00100100
+	printf("arr + 0: %p\n", arr + 0);
+	printf("arr + 1: %p\n", arr + 1);
 
-    printf("kBGM is enable: %s\n",
-        (options & kBGM) > 0 ? "T" : "F");
-    options ^= FULLSCREEN;
-    printf("options: %d\n", options);
+	// pointer 변수
+	int* dest = arr;
+	printf("dest: %d\n", *(dest + 1));
+	printf("dest: %d\n", dest[1]);
 
-    // Shift Operator
-    printf("2 << 2: %d\n", 2 << 2);
-    printf("10 << 1: %d\n", 10 >> 1);
+	//Call by Value
+	//Call by Reference
+	printf("int* Size: %d byte\n", sizeof(int*));
+	printf("char* Size: %d byte\n", sizeof(char*));
+	printf("double* Size: %d byte\n", sizeof(double*));
+
+	//Shallow Copy
+	//Deep Copy
+
+	char* str = "Test";
+	printf("%c\n", str[1]);
+
+
+	////////////////////////////////////////////////////////////
+	printf("\n\n");
+
+	int arr2D[2][3] = {
+		11, 12, 13,
+		21, 22, 23
+	};
+	printf("arr2D Address: %p\n", arr2D);
+	for (int row = 0; row < 2; ++row)
+	{
+		for (int col = 0; col < 2; ++col)
+		{
+			printf("arr2d[%d}[%d]: %d (%p)\n",
+				row, col
+				, arr2D[row][col]
+				, &arr2D[row][col]);
+
+
+
+
+
+
+		}
+	}
+
+	printf("arr2D + 0: %p\n", arr2D + 0);
+	printf("arr2D + 1: %p\n", arr2D + 1);
+	printf("*(arr2D + 0) + 1: %p\n", *(arr2D + 0) + 1);
+	printf("*(arr2D + 0) + 1: %d\n", *(*(arr2D + 0) + 1));
+	printf("\n\n");
+
+	int makeArr1D[6] = { 11, 12, 13, 21, 22, 23 };
+	int* arr0 = &makeArr1D[0];
+	int* arr3 = &makeArr1D[3];
+	int* makeArr2D[2] = { arr0, arr3 };
+	int** destArr2D = makeArr2D;
+	printf("arr0: %p\n", arr0);
+	printf("arr3: %p\n", arr3);
+	printf("destArr2D + 0; %p\n", *(destArr2D + 0));
+	printf("destArr2D + 1; %p\n", *(destArr2D + 1));
+	printf("destArr2D[0]: %p\n", destArr2D[0]);
+	printf("destArr2D[1]: %p\n", destArr2D[1]);
+
+	printf("destArr2D[0][1]: %d\n", (destArr2D[0])[1]);
+
 }
 {% endhighlight %}
 ![Markdown Image][Test]

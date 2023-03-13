@@ -1,0 +1,23 @@
+---
+title: "코딩 공부 3일차"
+layout: post
+date: 2023-03-09 17:24
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+
+2023년 3월 13일
+
+배틀필드 2042
+
+{% highlight c %}
+
+{% endhighlight %}
