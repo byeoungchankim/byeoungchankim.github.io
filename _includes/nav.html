@@ -28,6 +28,12 @@
                     <a class="link" href="{{ site.url }}/about">About</a>
                 </li>
             {% endif %}
+		{% if site.projects == true %}
+            {% if page.title != "책리뷰" %}
+                <li class="item">
+                    <a class="link" href="{{ site.url }}/projects">book</a>
+                </li>
+            {% endif %}
         {% endif %}
 
         {% if site.resume == true %}
