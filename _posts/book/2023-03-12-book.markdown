@@ -8,7 +8,7 @@ tag:
 - c
 - c++
 star: true
-category: blog
+category: book
 author: jamesfoster
 description: Markdown summary with different options
 ---
@@ -18,7 +18,6 @@ description: Markdown summary with different options
 
 effective c# 
 
-이책은 
 
 ![book Image][img]
 
