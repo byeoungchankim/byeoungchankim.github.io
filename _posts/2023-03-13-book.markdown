@@ -16,4 +16,13 @@ description: Markdown summary with different options
 
 2023년 3월 13일
 
-![book Image]
+effective c# 
+
+이책은 
+
+![book Image][img]
+
+
+
+
+[img]: /assets/images/book.jpg
