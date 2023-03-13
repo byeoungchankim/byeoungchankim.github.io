@@ -1,7 +1,7 @@
 ---
 title: "책감상"
 layout: post
-date: 2023-03-13 12:24
+date: 2023-03-12 12:24
 image: /assets/images/book.jpg
 headerImage: false
 tag:
