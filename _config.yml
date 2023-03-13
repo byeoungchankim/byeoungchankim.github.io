@@ -75,6 +75,7 @@ projects: true
 about: false
 blog: true
 test: true
+공부: true
 
 # do you want to show the "read time" of the posts?
 read-time: false
