@@ -1,0 +1,19 @@
+---
+title: "테스트 코딩 공부 4일차"
+layout: post
+date: 2023-03-14 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+
+2023년 3월 09일
+
+블로그 첫글
