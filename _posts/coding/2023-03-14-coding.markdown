@@ -1,0 +1,170 @@
+---
+title: "테스트 코딩 공부 4일차"
+layout: post
+date: 2023-03-14 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+
+2023년 3월 14일
+
+Vector 
+ArrayList
+
+
+배열
+장점: 아무곳이나 접속 가능하며 속도가 빠르다!
+단점: 정적배열이라 길이가 정해져야 한다! , 한자료만 넣을수있다 , 배열은 메모리주소가 연속 되어있어야하는데 그걸 활당화 할려면 동적활당을 해야한다
+
+동적 활당
+
+{% highlight c %}
+//잘못된 접근 방식
+*(pArr + 100) = 100;
+	printf("*(pArr + 100): %d\n", *(pArr + 100));
+
+	free(pArr);
+	free(pArr);
+
+{% endhighlight %}
+
+하지만 NULL을 추가하면
+
+{% highlight c %}
+*(pArr + 100) = 100;
+	printf("*(pArr + 100): %d\n", *(pArr + 100));
+
+	if (pArr != NULL)
+	{
+		free(pArr);
+		pArr = NULL;
+	}
+	//free(pArr);
+{% endhighlight %}
+
+동적활당 예시
+
+{% highlight c %}
+#include <stdio.h>
+#include <malloc.h>
+
+
+// Macro Function
+#define SAFE_FREE(p)\
+do {\
+if (p) {\
+free(p);\
+(p) = NULL;\
+	   }\
+}while(0)
+
+
+void MalloExample()
+{
+	//size_t 
+		//Dynamic Memory Allocate (동적으로 메모리 활당)
+	int arrLen = 10;
+	int* pArr = (int*)malloc(sizeof(int) * arrLen);
+	if (pArr == NULL) {
+		printf("malloc Failed\n");
+		return -1;
+	}
+
+	pArr[0] = 10;
+	*(pArr + 1) = 20;
+
+	//int arr[5];
+	//arr[100] = 10;
+	//arr[-1] = 20;
+	//printf("arr[100]: %d\n", arr[100]);
+
+	*(pArr + 100) = 100;
+	printf("*(pArr + 100): %d\n", *(pArr + 100));
+
+	if (pArr != NULL)
+	{
+		free(pArr);
+		pArr = NULL;
+	}
+	//free(pArr);
+	SAFE_FREE(pArr);
+}
+
+// _size: 바이트 단위의 메모리 크기 전달
+void CreateArray(int** _pArr, size_t _size);
+void Add(int** _pArr, int* _pArrLen, int* _pIndex, int _data);
+void Print(int* _pArr, int _index);
+
+
+//Vector 백터
+//ArrayList
+void main()
+{
+	int* pArr = NULL;
+	int arrLen = 5;
+	int index = 0;
+	CreateArray(&pArr, sizeof(int) * arrLen);
+
+		for (int i = 0; i < 27; ++i)
+			Add(&pArr, &arrLen, &index, i + 1);
+		Print(pArr, index);
+		
+	
+	SAFE_FREE(pArr);
+}
+
+void CreateArray(int** _pArr, size_t _size)
+{
+	SAFE_FREE(*_pArr);
+
+	*_pArr = (int*)malloc(_size);
+	if (*_pArr == NULL)
+		printf("CreateArray Failed!\n");
+}
+
+void Add(int** _pArr, int* _pArrLen, int* _pIndex, int _data)
+
+{ 
+	//배열이 가득 찼는지 검사
+	if (*_pIndex >= *_pArrLen) {
+		//늘어난 길이 만큼 새로운 배열 할당
+		int* pExtends = NULL;
+		// *2  : << 1
+		CreateArray(&pExtends, sizeof(int) *((*_pArrLen) * 2));
+
+		//복사
+		for (int i = 0; i < (*_pArrLen); ++i)
+			pExtends[i] = (*_pArr)[i];
+
+		//길이 바꾸기
+		*_pArrLen *= 2;
+		
+		//기존 배열 해제
+		SAFE_FREE((*_pArr));
+
+		//주소 바꾸기
+		(*_pArr) = pExtends;
+
+		printf("Extends: %d\n", *_pArrLen);
+		
+	}
+
+	(*_pArr)[*_pIndex] = _data;
+	++(*_pIndex);
+}
+void Print(int* _pArr, int _index)
+{
+	for (int i = 0; i < _index; ++i)
+		printf("%d - ", _pArr[i]);
+	printf("(%d)\n", _index);
+}
+
+{% endhighlight %}
