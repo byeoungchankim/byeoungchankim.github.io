@@ -1,0 +1,279 @@
+---
+title: "코딩 공부 7일차"
+layout: post
+date: 2023-03-17 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+Double Linked List 이중 연결 목록
+
+
+{% highlight c %}
+/#include <stdio.h>
+#include <malloc.h>
+
+
+#define SAFE_FREE(p) do { if(p) { free(p); p = NULL; } } while(0)
+
+
+typedef struct _SNode
+{
+	int data;
+	struct _SNode* pNext;
+} SNode;
+//typedef struct SNode Node;
+
+void AddNode(SNode* _pHead, int _data);
+void PrintAll(SNode* _pHead);
+void RemoveAll(SNode* _pHead);
+
+void InsertNode(SNode* _pHead, int _data, int _index);
+//카운터 세는거
+int Count(SNode* _pHead);
+//맨앞에 추가
+void AddFront(SNode* _pHead, int _data);
+//맨뒤에 추가 addnode 최적화 해서 넣기
+void AddBack(SNode* _pHead, int _data);
+//인덱스 받으면 노드 리턴
+SNode* GetNodeWithIndex(SNode* _pHead, int _index);
+//데이터 받으면 노드 리턴
+SNode* GetNodeWithData(SNode* _pHead, int _data);
+//인덱스를 받으면 그위치에 있는 노드 삭제
+void RemoveAt(SNode* _pHead, int _index);
+//노드를 받으면 그노드삭제
+void Remove(SNode* _pHead, SNode** _delNode);
+
+// Single Linked List
+void main()
+{
+	SNode head = { 0, NULL };
+	PrintAll(&head);
+	AddNode(&head, 100);
+	for (int i = 0; i < 5; ++i)
+		AddNode(&head, 10 * (i + 1));
+	PrintAll(&head);
+	AddFront(&head, 300);
+	PrintAll(&head);
+
+	InsertNode(&head, 77, 14);
+	PrintAll(&head);
+
+	printf("%d\n", Count(&head));
+
+	AddBack(&head, 400);
+	PrintAll(&head);
+
+	SNode* node = GetNodeWithIndex(&head, 5);
+	printf("%d\n", node->data);
+	PrintAll(&head);
+	node = GetNodeWithData(&head, 30);
+	printf("%d\n", node->data);
+
+	printf("삭제 전: ");
+	PrintAll(&head);
+	RemoveAt(&head, 0);
+	printf("삭제 후: ");
+	PrintAll(&head);
+
+
+	RemoveAll(&head);
+	PrintAll(&head);
+}
+
+void AddNode(SNode* _pHead, int _data)
+{
+	// STL: Interator
+	// Current Node
+	SNode* pCurNode = _pHead;
+	while (pCurNode->pNext != NULL)
+	{
+		pCurNode = pCurNode->pNext;
+	}
+
+	SNode* pNewNode = (SNode*)malloc(sizeof(SNode));
+	if (pNewNode != NULL)
+	{
+		pNewNode->data = _data;
+		pNewNode->pNext = NULL;
+
+		pCurNode->pNext = pNewNode;
+	}
+}
+
+void PrintAll(SNode* _pHead)
+{
+	SNode* pCurNode = _pHead->pNext;
+	if (pCurNode == NULL) {
+		printf("List is empty!\n");
+		return;
+	}
+	int count = 0;
+	do {
+		++count;
+		printf("%d - ", pCurNode->data);
+		pCurNode = pCurNode->pNext;
+	} while (pCurNode != NULL);
+	printf("(%d)\n", count);
+	//printf("\n");
+}
+
+void RemoveAll(SNode* _pHead)
+{
+	if (_pHead == NULL ||
+		_pHead->pNext == NULL) return;
+
+	SNode* pCurNode = _pHead->pNext;
+	SNode* pDelNode = _pHead->pNext;
+
+	// 5 - 3 - 1 - N
+	do {
+		pCurNode = pDelNode->pNext;
+		//printf("pDelNode data: %d\n", pDelNode->data);
+		SAFE_FREE(pDelNode);
+		pDelNode = pCurNode;
+	} while (pCurNode != NULL);
+
+	_pHead->pNext = NULL;
+}
+
+void InsertNode(SNode* _pHead, int _data, int _index)
+{
+	if (_pHead == NULL) return;
+	if (_index < 0) _index *= -1;
+
+	SNode* pCurNode = _pHead->pNext;
+	int curIdx = 0;
+	while (pCurNode != NULL)
+	{
+		if (_index == 0 ||
+			curIdx + 1 == _index) break;
+
+		pCurNode = pCurNode->pNext;
+		++curIdx;
+
+		
+	}
+
+	if (pCurNode == NULL) {
+		AddNode(_pHead, _data);
+		return;
+	}
+
+	SNode* pCurNextNode = pCurNode->pNext;
+	SNode* pNewNode = (SNode*)malloc(sizeof(SNode));
+	pNewNode-> data = _data;
+
+	pCurNode->pNext = pNewNode;
+	pNewNode->pNext = pCurNextNode;
+
+	printf("%d: %d\n", _index, _data);
+
+}
+int Count(SNode* _pHead) {
+	SNode* pCurNode = _pHead->pNext;
+	if (pCurNode == NULL) {
+		return 0;
+	}
+
+	int count = 0;
+	do {
+		++count;
+		pCurNode = pCurNode->pNext;
+	} while (pCurNode != NULL);
+	return count;
+}
+
+void AddFront(SNode* _pHead, int _data)
+{
+	SNode* pCurNode = _pHead;
+
+	SNode* pNewNode = (SNode*)malloc(sizeof(SNode));
+	if (pNewNode != NULL)
+	{
+		pNewNode->data = _data;
+		pNewNode->pNext = _pHead->pNext;
+
+		_pHead->pNext = pNewNode;
+	}
+}
+
+void AddBack(SNode* _pHead, int _data)
+{
+	if (_pHead == NULL) return;
+
+	SNode* pCurNode = _pHead->pNext;
+	int curIdx = 0;
+	while (pCurNode != NULL)
+	{
+		
+		pCurNode = pCurNode->pNext;
+		++curIdx;
+
+		
+	}
+
+	if (pCurNode == NULL) {
+		AddNode(_pHead, _data);
+		return;
+	}
+}
+//인덱스 빼기
+SNode* GetNodeWithIndex(SNode* _pHead, int _index) {
+	SNode* pCurNode = _pHead->pNext;
+	
+	for (int i = 0; i < _index; ++i) {
+		pCurNode = pCurNode->pNext;
+		if (pCurNode == NULL) break;
+	}
+
+	return pCurNode;
+}
+SNode* GetNodeWithData(SNode* _pHead, int _data) {
+	SNode* pCurNode = _pHead->pNext;
+
+	while (1) {
+		pCurNode = pCurNode->pNext;
+		if (pCurNode == NULL) break;
+		if (pCurNode->data == _data) break;
+	}
+
+	return pCurNode;
+}
+
+void RemoveAt(SNode* _pHead, int _index)
+{
+	if  (_pHead == NULL ||
+		_pHead->pNext == NULL) return;
+
+	SNode* pCurNode = _pHead;
+	SNode* prevNode;
+	int cnt = 0;
+
+	while (pCurNode ->pNext != NULL)
+	{
+		cnt++;
+		prevNode = pCurNode;
+		pCurNode = pCurNode->pNext;
+
+		if (cnt == _index)
+		{
+			prevNode->pNext = pCurNode->pNext;
+			SAFE_FREE(pCurNode);
+			return;
+		}
+
+	}
+}
+{% endhighlight %}
+
+
+
+

@@ -1,0 +1,131 @@
+---
+title: "코딩 공부 5일차"
+layout: post
+date: 2023-03-15 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+
+2023년 3월 15일
+
+Structure
+Structure Padding
+
+{% highlight c %}
+struct SExample
+{
+	// Structure Member Variables
+	char c;
+	double d;
+	int i;
+
+	//void Func() {}
+};
+
+
+
+typedef struct _SNode
+{
+	int data;
+	struct _SNode* pNext;
+} SNode;
+//typedef struct SNode Node;
+
+void AddNode(SNode* _pHead, int _data);
+void PrintAll(SNode* _pHead);
+void RemoveAll(SNode* _pHead);
+
+
+// Single Linked List
+void main()
+{
+	SNode* pNode = (SNode*)malloc(sizeof(SNode));
+	if (pNode != NULL)
+	{
+		pNode->data = 10;
+		//SAFE_FREE(pNode);
+		if (pNode != NULL)
+		{
+			free(pNode);
+			pNode = NULL;
+		}
+	}
+
+
+	///////////////////////////////////////////////
+
+
+	SNode head = { 0, NULL };
+	PrintAll(&head);
+	AddNode(&head, 100);
+	//for (int i = 0; i < 5; ++i)
+	//	AddNode(&head, 10 * (i + 1));
+	PrintAll(&head);
+	RemoveAll(&head);
+	PrintAll(&head);
+}
+
+void AddNode(SNode* _pHead, int _data)
+{
+	// STL: Interator
+	// Current Node
+	SNode* pCurNode = _pHead;
+	while (pCurNode->pNext != NULL)
+	{
+		pCurNode = pCurNode->pNext;
+	}
+
+	SNode* pNewNode = (SNode*)malloc(sizeof(SNode));
+	if (pNewNode != NULL)
+	{
+		pNewNode->data = _data;
+		pNewNode->pNext = NULL;
+
+		pCurNode->pNext = pNewNode;
+	}
+}
+
+void PrintAll(SNode* _pHead)
+{
+	SNode* pCurNode = _pHead->pNext;
+	if (pCurNode == NULL) {
+		printf("List is empty!\n");
+		return;
+	}
+
+	do {
+		printf("%d - ", pCurNode->data);
+		pCurNode = pCurNode->pNext;
+	} while (pCurNode != NULL);
+	//printf("(%d)\n", ??);
+	printf("\n");
+}
+
+void RemoveAll(SNode* _pHead)
+{
+	if (_pHead == NULL ||
+		_pHead->pNext == NULL) return;
+
+	SNode* pCurNode = _pHead->pNext;
+	SNode* pDelNode = _pHead->pNext;
+
+	// 5 - 3 - 1 - N
+	do {
+		pCurNode = pDelNode->pNext;
+		printf("pDelNode data: %d\n", pDelNode->data);
+		SAFE_FREE(pDelNode);
+		pDelNode = pCurNode;
+	} while (pCurNode != NULL);
+
+	_pHead->pNext = NULL;
+}
+{% endhighlight %}
+

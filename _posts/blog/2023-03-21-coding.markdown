@@ -1,0 +1,128 @@
+---
+title: "코딩 공부 9일차"
+layout: post
+date: 2023-03-21 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+
+문자열 관리 4대장 구현
+
+{% highlight c %}
+#include <stdio.h>
+#include <malloc.h>
+
+#define SAFE_FREE(p) if (p) { free(p); (p) = NULL; }
+
+//문자열 관리 4대장
+// strlen : 길이
+int Strlen(const char* const _pstr);
+// strcpy : 복사
+// Destination(dst), source(src)
+void StrCpy(char** _pDest, char* _pSour); //길이를 구한다음에 동적활당을 시켜주고 printf 
+// strcmp : 비교
+// Compare 
+//같으면 1, 다르면 0
+int StrCmp(char* _Lhs, char* _PRhs);
+
+// strcat : 합치기
+// String Concatent 문자열 합침
+void StrCat(char** _pDest, char* _pSour1, char* _pSour2); 
+
+
+//문자(Character)
+//문자열(string)
+void main()
+{
+	/*
+	char c = 'a';
+	//string constant 문자열상수
+	char* str = "String";
+	//str[1] = 'T';
+	//String Array / stirng Variables 문자열 배열
+	//\0: 널 문자(NULL Character)
+	char strArr[] = { 's','t','r','i','n','g','\0'};
+	strArr[2] = 'R';
+	int strLen = sizeof(strArr) / sizeof(strArr[0]);
+	for (int i = 0; i < strLen; ++i)
+		printf("%C", strArr[i]);
+	printf("\n");
+
+	printf("str: %s(%d)\n", str, (int)strlen(str));
+	printf("strArr: %s(%d)\n", strArr, (int)strlen(str));
+	Strlen(&str, strArr, strLen); */
+
+	char* str = "string";
+	printf("%s (길이: %d)\n", str, Strlen(str));
+	char* strCopy;
+	StrCpy(&strCopy, str);
+	printf("%s (길이: %d)\n", strCopy, Strlen(strCopy));
+
+	printf("%d\n", StrCmp(str, "test"));
+	printf("%d\n", StrCmp(str, strCopy));
+	char* strCat;
+	StrCat(&strCat, str, " 뚱이");
+	printf("%s (길이: %d)\n", strCat, Strlen(strCat));
+	
+	SAFE_FREE(strCopy);
+}
+
+int Strlen(const char* const _pstr)
+{
+	int count = 0;
+	while (_pstr[count] != '\0') ++count;
+	return count;
+}
+
+void StrCpy(char** _pDest, char* _pSour)
+{
+	*_pDest = (char*)malloc(sizeof(_pSour));
+	if (*_pDest == NULL) return;
+	int count = 0;
+	while (_pSour[count] != '\0') {
+		(*_pDest)[count] = _pSour[count];
+		++count;
+	}
+	(*_pDest)[count] = '\0';
+}
+
+int StrCmp(char* _Lhs, char* _PRhs)
+{
+	int count = 0;
+	while (_Lhs[count] != '\0' || _PRhs[count] != '\0') {
+		if (_Lhs[count] != _PRhs[count])
+			return 0;
+		else {
+			count++;
+		}
+	}
+	return 1;
+}
+void StrCat(char** _pDest, char* _pSour1, char* _pSour2)
+{
+	*_pDest = (char*)malloc(sizeof(_pSour1) + sizeof(_pSour2) - sizeof(char));
+	if (*_pDest == NULL) return;
+	int count = 0;
+	int count2 = 0;
+	while (_pSour1[count] != '\0') {
+		(*_pDest)[count] = _pSour1[count];
+		++count;
+	}
+	while (_pSour2[count2] != '\0') {
+		(*_pDest)[count] = _pSour2[count2];
+		++count; ++count2;
+	}
+	(*_pDest)[count] = '\0';
+}
+{% endhighlight %}
+
+
+
