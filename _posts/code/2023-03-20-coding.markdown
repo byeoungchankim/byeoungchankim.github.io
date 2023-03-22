@@ -1,0 +1,181 @@
+---
+title: "코딩 공부 8일차"
+layout: post
+date: 2023-03-20 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+star: true
+category: coding
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+
+
+
+{% highlight c %}
+#include <stdio.h>
+#include <malloc.h>
+
+//노드 생성
+typedef struct _SNode
+{
+	int data;
+	//왼쪽 노드 생성
+	struct _SNode* PLeft;
+	//오른쪽 노드 생성
+	struct _SNode* PRight;
+}SNode;
+
+//null 초기화
+SNode* g_Phead = NULL;
+
+
+void BuildTree(int* _pArr, int _len);
+void AddNode(SNode* _pCompareNode, SNode* _pNewNode);
+void PrintAll();
+void PrintRecursive(SNode* _pCurNode);
+void RemoveAll();
+void RemoveRecursive(SNode* _pCurNode);
+
+//과제
+//계수 새는거
+int Count();
+//특정값 찾는거
+SNode* GetNodeWithData(int _data);
+//데이터를 받으면 해당 데이터를  삭제
+void RemoveWithData(int _data);
+void PrintWithLevel(int _lv);
+
+
+//공부할꺼
+//Graph
+//Hash-Table
+//Binary-tree
+//Quad-tree, Oc-Tree
+
+void main ()
+{
+	//배열
+	int arr[] = { 8, 5, 10, 2, 15, 31, 25, 19 };
+	//트리 불러오기
+	BuildTree(arr, sizeof(arr) / sizeof(arr[0]));
+	//출력 불러오기
+	PrintAll();
+	RemoveAll();
+}
+
+void BuildTree(int* _pArr, int _len)
+{
+	if (_pArr == NULL || _len < 1) return;
+	//가운데 찾는법 길이에서 나누기 2를 하면됨
+	int centerIdx = _len >> 1;
+
+	//동적활당
+	g_Phead = (SNode*)malloc(sizeof(SNode));
+
+	g_Phead->data = _pArr[centerIdx];
+	g_Phead->PLeft = NULL;
+	g_Phead->PRight = NULL;
+
+	for (int i = 0; i < _len; ++i) {
+		if (i == centerIdx) continue;
+
+		SNode* pNewNode = (SNode*)malloc(sizeof(SNode));
+		pNewNode->data = _pArr[i];
+		pNewNode->PLeft = NULL;
+		pNewNode->PRight = NULL;
+
+		AddNode(g_Phead, pNewNode);
+	}
+}
+
+void AddNode(SNode * _pCompareNode, SNode * _pNewNode)
+{
+		if (_pCompareNode == NULL || _pNewNode == NULL) return;
+
+		//왼쪽 비교
+		if (_pNewNode->data < _pCompareNode->data)
+		{
+			//왼쪽이 null이면 삽입
+			if (_pCompareNode->PLeft == NULL) {
+				_pCompareNode->PLeft = _pNewNode;
+				printf("Add Left: %d\n", _pNewNode->data);
+				return;
+			}
+			//왼쪽이 null이 아니면 한번더 호출
+			else {
+				printf("Move Left: %d -> %p\n", _pNewNode->data, _pNewNode->data);
+				AddNode(_pCompareNode->PLeft, _pNewNode);
+			}
+		}
+
+		//오른쪽 비교
+		else {
+			if (_pCompareNode->PRight == NULL) {
+				_pCompareNode->PRight = _pNewNode;
+				printf("Add Right: %d\n", _pNewNode->data);
+				return;
+			}
+			else {
+				printf("Move Left: %d -> %p\n", _pNewNode->data, _pNewNode->data);
+				AddNode(_pCompareNode->PLeft, _pNewNode);
+			}
+		}
+}
+void PrintAll()
+{
+	if (g_Phead == NULL) {
+		printf("Tree is empty!\b");
+		return;
+	}
+
+	PrintRecursive(g_Phead);
+}
+
+
+void PrintRecursive(SNode* _pCurNode)
+{
+	//재귀를 만났을때 탈출 
+	if (_pCurNode == NULL) return;
+
+		if (_pCurNode ->PLeft != NULL)
+		PrintRecursive(_pCurNode->PLeft);
+
+	printf("%d -", _pCurNode->data);
+	//오른쪽이 널이 아니면 
+	if (_pCurNode->PRight != NULL)
+		PrintRecursive(_pCurNode->PRight);
+}
+	
+
+
+void RemoveAll()
+{
+	if (g_Phead == NULL) return;
+
+	RemoveRecursive(g_Phead);
+
+	g_Phead = NULL;
+}
+void RemoveRecursive(SNode* _pCurNode)
+{
+	//제거하는법 왼쪽 타고 오른쪽에 타고 하면
+	if (_pCurNode->PLeft != NULL)
+		RemoveRecursive(_pCurNode->PLeft);
+
+	if(_pCurNode->PRight != NULL)
+		RemoveRecursive(_pCurNode->PRight);
+
+	printf("Del Node: %d\n", _pCurNode->data);
+	if (_pCurNode->PRight != NULL)
+		_pCurNode = NULL;
+
+}
+{% endhighlight %}
+
+
+

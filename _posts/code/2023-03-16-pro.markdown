@@ -1,7 +1,7 @@
 ---
-title: "코딩 공부 7일차"
+title: "코딩 공부 6일차"
 layout: post
-date: 2023-03-17 09:00 +0900
+date: 2023-03-16 09:00 +0900
 image: /assets/images/markdown.jpg
 headerImage: false
 tag:
@@ -13,11 +13,11 @@ author: jamesfoster
 description: Markdown summary with different options
 ---
 
-Double Linked List 이중 연결 목록
+
 
 
 {% highlight c %}
-/#include <stdio.h>
+#include <stdio.h>
 #include <malloc.h>
 
 
