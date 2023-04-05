@@ -1,5 +1,5 @@
 ---
-title: "유니티 1일차"
+title: "유니티 플레이어 컨트롤"
 layout: post
 date: 2023-03-27 09:00 +0900
 image: /assets/images/markdown.jpg
