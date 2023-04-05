@@ -1,0 +1,166 @@
+---
+title: "유니티 1일차"
+layout: post
+date: 2023-03-27 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+- c#
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+유니티
+
+AABB :축이정열 되있는 박스
+
+Axis Aligned 
+Bounding Box 
+
+물체의 경계상자가 똑같은 축의 방향으로 만들어진다
+
+장점은 충돌처리에 계산량이 적고 직관적으로 구현 가능
+단점은 물체와 경계상자와 차이가 클 수 있고 물체의 회전시 AABB를 갱신해주어야 한다. 그래서 보통 정적인 물체에 적용시킨다.
+
+OBB
+
+Oriented Bounding Box :물체가 회전하면 따라서 같이 회전하는 경계 상자이다
+AABB와 마찬가지로 박스를 이루는 세면은 서로 수직 이지만 해당 면의 노말 벡터가 X Y Z와 일치하지 않는 박스이다
+X Y Z와 일치하지 않기 때문에 AABB보다 충돌 검출의 시간 복잡도가 높지만 충돌 박스가 XYZ 좌표를 기준으로 최대,최소를 계속
+변하는 AABB보다 더 적합한 바운딩 박스를 만들수 있다 주로 요즘 게임에선 AABB보단 더 정밀한 OBB를 많이 사용한다고 한다
+
+
+Callback Function 콜백 함수 (시스템이 호출하는 함수)
+
+원의 정의: 같은 거리에 있는 점들의 집합
+
+
+
+{% highlight c %}
+//플레이어 컨트롤
+public class PlayerController : MonoBehaviour
+{
+    
+
+    // Class Member Variables
+    private Transform tr = null;
+    private Rigidbody rb = null;
+
+    // Attribute
+    [SerializeField][Range(10f, 50f)]
+    private float moveSpeed = 10f;
+    [SerializeField, Range(50f, 100f)]
+    private float rotSpeed = 50f;
+
+    private void Awake()
+    {
+        tr = GetComponent<Transform>();
+        //tr = transform;
+        rb = GetComponent<Rigidbody>();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.W))
+        {
+            //tr.position.z = 10f;
+            // Vector3 newPos = transform.position;
+            // newPos.z += moveSpeed * Time.deltaTime;
+            // transform.position = newPos;
+            rb.velocity = tr.forward * moveSpeed;
+        }
+
+        if(Input.GetKeyUp(KeyCode.W))
+        {
+            rb.velocity = Vector3.zero;
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            Vector3 newPos =
+                transform.position +
+                (-tr.forward * moveSpeed * Time.deltaTime);
+            transform.position = newPos;
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            tr.Translate(
+                Vector3.left * moveSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            tr.Translate(
+                Vector3.right * moveSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.Q))
+        {
+            Vector3 newRot = tr.rotation.eulerAngles;
+            newRot.y -= rotSpeed * Time.deltaTime;
+            tr.rotation = Quaternion.Euler(newRot);
+            //tr.rotation.eulerAngles = newRot;
+
+            //r.localRotation
+        }
+
+        if (Input.GetKey(KeyCode.E))
+        {
+            // Function Overloading
+            tr.Rotate(Vector3.up,
+                      rotSpeed * Time.deltaTime);
+        }
+        if (Input.GetKey(KeyCode.R))
+        { 
+            //크기 2배로 키우기
+            tr.localScale = Vector3.one * 2f;
+        }
+        if (Input.GetKey(KeyCode.F))
+        { 
+            //크기 원래대로 돌리기
+            tr.localScale = Vector3.one;
+        }
+    }
+
+    private void OnCollisionEnter(Collision _collision)
+    {
+        Debug.Log(_collision. gameObject.name);
+    }
+}
+
+{% endhighlight %}
+
+빙글빙글 도는거
+{% highlight c %}
+public class AroundBall : MonoBehaviour
+{
+    private Transform ballTr = null;
+
+    private float angle = 0f;
+    private float speed = 10f;
+
+    private void Awake()
+    {
+        ballTr = transform.GetChild(0);
+        Debug.Log(ballTr.name);
+    }
+
+    private void Update()
+    {
+        angle += Time.deltaTime * speed;
+        //Clamp
+        if (angle > 360f) angle = 0f;
+
+        //위치 구하기
+        float x = Mathf.Cos(angle * Mathf.Deg2Rad);
+        float y = 0f;
+        float z = Mathf.Sin(angle * Mathf.Deg2Rad);
+
+        ballTr.position = new Vector3(x, y, z);
+    }
+{% endhighlight %}

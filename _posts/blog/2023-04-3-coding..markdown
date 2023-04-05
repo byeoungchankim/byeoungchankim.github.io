@@ -1,0 +1,307 @@
+---
+title: "유니티 ui,자판기 작동"
+layout: post
+date: 2023-04-03 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+- c#
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+유니티
+
+직렬화: 직렬화는 간단하게 이야기하면 메모리에 할당된?, 클래스의 객체를 바이너리화하는 것을 직렬화라고 합니다. 즉, 클래스 내부에 있는 데이터, 변수의 값들을 byte형식의 데이터로 만드는 것입니다.
+
+
+
+{% highlight c %}
+//ui메뉴
+public class UIMenu : MonoBehaviour
+{
+    public delegate void OnClickMenuDelegate(int _btnNum);
+
+    [SerializeField]
+    private GameObject menuBtnPrefab = null;
+
+    private List<UIMenuButton> menuBtnList = null;
+
+
+    public void BuildButtons(
+        List<VendingMachine.SProductInfo> _productInfoList,
+        OnClickMenuDelegate _onClickCallback)
+    {
+        if (_productInfoList == null ||
+            _productInfoList.Count == 0) return;
+
+        if (menuBtnList != null &&
+            menuBtnList.Count > 0)
+            ClearMenuButtonList();
+
+        menuBtnList = new List<UIMenuButton>();
+        //menuBtnList.Clear();
+
+        for (int i = 0; i < _productInfoList.Count; ++i)
+        {
+            GameObject go = Instantiate(menuBtnPrefab);
+            //go.transform.SetParent(transform);
+            //go.transform.localPosition = Vector3.zero;
+            RectTransform rectTr =
+                go.GetComponent<RectTransform>();
+            rectTr.SetParent(GetComponent<RectTransform>());
+            rectTr.localPosition =
+                CalcLocalPositionWithIndex(i, _productInfoList.Count);
+
+            UIMenuButton btn =
+                go.GetComponent<UIMenuButton>();
+            //btn.InitInfos(
+            //    _productInfoList[i].product.ToString(),
+            //    _productInfoList[i].price,
+            //    _productInfoList[i].stock
+            //    );
+            btn.InitInfos(_productInfoList[i],
+                          i,
+                          _onClickCallback);
+
+            //Button button = go.GetComponent<Button>();
+            //button.onClick.AddListener(
+            //    // 람다식(Lambda Expression)
+            //    () =>
+            //    {
+            //        Debug.Log(i);
+            //        _onClickCallback?.Invoke(i);
+            //    }
+            //);
+
+            menuBtnList.Add(btn);
+        }
+
+        Debug.Log(menuBtnList.Count);
+    }
+
+    private void ClearMenuButtonList()
+    {
+        // Range Based Loop
+        foreach (UIMenuButton btn in menuBtnList)
+        {
+            Destroy(btn.gameObject);
+        }
+        menuBtnList.Clear();
+    }
+
+    /// <summary>
+    /// 버튼 위치 구하는 함수
+    /// </summary>
+    /// <param name="_idx">현재 인덱스</param>
+    /// <param name="_totalCnt">버튼 전체 갯수</param>
+    /// <returns></returns>
+    private Vector3 CalcLocalPositionWithIndex(int _idx, int _totalCnt)
+    {
+        if (_idx < 0 || _totalCnt < 1) return Vector3.zero;
+
+        const int COL_MAX = 3;
+
+        Vector2 bgSize = transform.GetChild(0).GetComponent<RectTransform>().sizeDelta;
+        Vector2 btnSize = menuBtnPrefab.GetComponent<RectTransform>().sizeDelta;
+
+        int colCnt = Mathf.Clamp(_totalCnt, 1, COL_MAX);
+        float btnTotalW = colCnt * btnSize.x;
+        float totalOffsetW = bgSize.x - btnTotalW;
+
+        int rowCnt = (int)Mathf.Ceil((float)_totalCnt / colCnt);
+        float btnTotalH = rowCnt * btnSize.y;
+        float totalOffsetH = bgSize.y - btnTotalH;
+
+        Vector2 offset = Vector2.zero;
+        offset.x = totalOffsetW / (float)(colCnt + 1);
+        offset.y = totalOffsetH / (float)(rowCnt + 1);
+
+        Vector2 btnDist = offset + btnSize;
+        Vector2 startPos = new Vector2(
+            -btnDist.x / (colCnt % 2 == 0 ? 2f : 1f),
+            btnDist.y / (rowCnt % 2 == 0 ? 2f : 1f)
+            );
+
+        Vector3 pos = Vector3.zero;
+        if (colCnt > 1) pos.x = startPos.x + ((_idx % COL_MAX) * btnDist.x);
+        if (rowCnt > 1) pos.y = startPos.y - ((_idx / COL_MAX) * btnDist.y);
+
+        return pos;
+    }
+{% endhighlight %}
+자판기 코드
+{% highlight c %}
+public class VendingMachine : MonoBehaviour
+{
+    public enum EVMProduct
+    {
+        Coke, Tissue, Bread, Letsbe,
+        Vita500, OronaminC, Sprite,
+        SSOrange
+    }
+
+    [System.Serializable]
+    public struct SProductInfo
+    {
+        public EVMProduct product;
+        public int price;
+        public int stock;
+
+        public bool CheckStock() { return stock > 0; }
+        public void Sell() {
+            if (CheckStock()) --stock;
+        }
+    }
+
+    [SerializeField]
+    private UIMenu uiMenu = null;
+
+    // Template
+    [SerializeField]
+    private List<SProductInfo> productInfoList
+        = new List<SProductInfo>();
+
+
+    private void Awake()
+    {
+        if (uiMenu == null)
+        {
+            Debug.LogError("UIMenu is missing!");
+            return;
+        }
+    }
+
+    // 상품 판매, 생성
+
+    // UI 상호작용
+    private void OnTriggerEnter(Collider _other)
+    {
+        if (_other.CompareTag("Player"))
+        {
+            if (uiMenu)
+            {
+                uiMenu.BuildButtons(
+                    productInfoList,
+                    OnClickMenu);
+                uiMenu.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider _other)
+    {
+        if (_other.CompareTag("Player"))
+        {
+            if (uiMenu != null)
+                uiMenu.gameObject.SetActive(false);
+        }
+    }
+
+    public static string VMProductToName(EVMProduct _product)
+    {
+        switch (_product)
+        {
+            case EVMProduct.Coke: return "콜라";
+            case EVMProduct.Tissue: return "휴지";
+            case EVMProduct.Bread: return "빵";
+            case EVMProduct.Letsbe: return "레쓰비";
+            case EVMProduct.Vita500: return "비타500";
+            case EVMProduct.OronaminC: return "오로나민C";
+            case EVMProduct.Sprite: return "스프라이트";
+            case EVMProduct.SSOrange: return "쌕쌕 오렌지";
+            default: return "몰?루";
+        }
+    }
+
+    public void OnClickMenu(int _btnNum)
+    {
+        Debug.Log(
+            productInfoList[_btnNum].product.ToString() +
+            "(" +
+            productInfoList[_btnNum].price +
+            "): " +
+            productInfoList[_btnNum].stock
+            );
+
+        if (!productInfoList[_btnNum].CheckStock())
+            return;
+
+        //--productInfoList[_btnNum].stock;
+        productInfoList[_btnNum].Sell();
+
+        // 상품 만들기
+        // 보유한 돈 차감
+        // 버튼 정보 갱신
+    }
+{% endhighlight %}
+
+ui 메뉴 버튼 작동
+{% highlight c %}
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
+
+public class UIMenuButton : MonoBehaviour
+{
+    public enum EMBInfo { Name, Price, Stock }
+
+    private TextMeshProUGUI[] texts = null;
+
+    private Button btn = null;
+
+    private void Awake()
+    {
+        texts =
+            GetComponentsInChildren<TextMeshProUGUI>();
+        //foreach (TextMeshProUGUI text in texts)
+        //    Debug.Log(text.name);
+
+        btn = GetComponent<Button>();
+    }
+
+    //private void Start()
+    //{
+    //    InitInfos("콜라", 600, 3);
+    //}
+
+    // Initialization
+    public void InitInfos(
+        string _name, int _price, int _stock,
+        int _num,
+        UIMenu.OnClickMenuDelegate _onClickCallback)
+    {
+        texts[(int)EMBInfo.Name].text = _name;
+        texts[(int)EMBInfo.Price].text =
+            _price.ToString();
+        texts[(int)EMBInfo.Stock].text =
+            _stock.ToString();
+
+        btn.onClick.AddListener(() =>
+        {
+            _onClickCallback?.Invoke(_num);
+        });
+    }
+
+    public void InitInfos(
+        VendingMachine.SProductInfo _productInfo,
+        int _num,
+        UIMenu.OnClickMenuDelegate _onClickCallback)
+    {
+        InitInfos(
+            VendingMachine.VMProductToName(_productInfo.product),
+            _productInfo.price,
+            _productInfo.stock,
+            _num,
+            _onClickCallback
+            );
+    }
+}
+{% endhighlight %}
