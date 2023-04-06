@@ -1,0 +1,77 @@
+---
+title: "멀티스레드(Main Threading)"
+layout: post
+date: 2023-04-06 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+- c#
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+멀티스레딩(Main Threading)은 여러 코어에서 한 번에 여러 개의 스레드를 처리하는 CPU 성능을 활용하는 프로그래밍의 한 유형입니다  한번에, 하나가 아니라 동시에 여러 개의 작업 또는 명령을 실행합니다
+
+스레드(Thread)는 CPU 수행의 기본 단위 또는 프로세스 안의 제어권의 흐름이다. 스레드가 수행되는 환경을 Task라고 부르는데, 전통적인 프로세스는 하나의 스레드가 있는 Task와 일치한다
+유니티 최적화 하는것
+스레드는 Thread ID, Program counter, Register set, Stack space로 구성된다. 각각의 스레드는 주로 최소한 자신의 레지스터 상태와 스택을 갖는다.
+
+1.스레드(Thread) (단일 스레드 / 멀티 스레드)
+유니티는 단일 스레드로 처리함(기본)  >> 작업 한 개씩 처리 (Massage Loop, 순서대로 작업 처리)
+
+유니티 내부적으로는 멀티 쓰레드 사용 (CPU에서 동시에 처리. 단점으로는 정확한 디버깅,오류 제어 어려움)
+
+멀티 **쓰레드** 사용 시, 레이스 컨디션 현상과 오류 발생 할 수 있음
+
+2. 코루틴 (단일 스레드)
+
+함수를 작동 시 게임 정지를 방지하도록 Main Loop로 돌려준다.
+
+- yield 양보, return new waitseconds ~초간 Main Loop로 양보함
+양보 후 코루틴 내 작업한다.
+메인과 서브 루프 간 협동하며, 단일 스레드 루프 하에서 일을 번갈아가며 진행
+
+스레드 시작
+{% highlight c %}
+using System.Threading
+{% endhighlight %}
+
+스레드 생성
+Thread 스레드변수명 = new Thread(스레드메서드명);
+
+스레드변수명.Start()
+
+...
+
+스레드메서드
+{% highlight c %}
+using UnityEngine;
+using System.Threading;
+
+public class ThreadDemo : MonoBehaviour
+{
+    void Start()
+    {
+        Thread thread = new Thread(Run);
+        thread.Start();
+    }
+
+    void Run()
+    {
+        Debug.LogFormat("Thread#{0}: 시작", Thread.CurrentThread.ManagedThreadId);        
+        Thread.Sleep(1000);
+        Debug.LogFormat("Thread#{0}: 종료", Thread.CurrentThread.ManagedThreadId);
+    }
+}
+{% endhighlight %}
+
+![Markdown Image][Real]
+
+
+
+
+[Real time]: /assets/images/실제시간시계.png
