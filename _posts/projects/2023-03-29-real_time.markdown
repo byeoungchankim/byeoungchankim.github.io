@@ -8,7 +8,7 @@ tag:
 - c
 - c#
 star: true
-category: projects
+category: blog
 author: jamesfoster
 description: Markdown summary with different options
 ---
