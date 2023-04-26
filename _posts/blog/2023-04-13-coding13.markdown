@@ -1,0 +1,364 @@
+---
+title: "길찾기? 알고리즘, 다익스트라"
+layout: post
+date: 2023-04-12 09:00 +0900
+image: /assets/images/markdown.jpg
+headerImage: false
+tag:
+- c
+- c++
+- c#
+star: true
+category: blog
+author: jamesfoster
+description: Markdown summary with different options
+---
+
+플레이어
+{% highlight c %}
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class Player : MonoBehaviour
+{
+    [SerializeField]
+    private Transform destSampleTr = null;
+
+    [Header("-- Flag --")]
+    [SerializeField]
+    private Flag entryFlag = null;
+    [SerializeField]
+    private Flag goalFlag = null;
+    [SerializeField]
+    
+
+    private NavMeshAgent agent = null;
+
+    private List<Flag> flagList = null;
+    private bool isMoving = false;
+
+    private void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
+
+    private void Start()
+    {
+        flagList =
+            FlagManager.PathFinding(entryFlag, goalFlag);
+
+        if (flagList == null ||
+            flagList.Count == 1)
+        {
+            Debug.LogError("PathFinding Failed!");
+            return;
+        }
+
+        SetNextFlag();
+    }
+
+    private IEnumerator MovingCoroutine(Flag _nextFlag)
+    {
+        agent.destination = _nextFlag.transform.position;
+        isMoving = true;
+        yield return null;
+
+        while (agent.remainingDistance > 0f)
+            yield return null;
+
+        _nextFlag.SetColor(Flag.EState.Passed);
+        isMoving = false;
+
+        SetNextFlag();
+    }
+
+    private void SetNextFlag()
+    {
+        if (isMoving) return;
+        if (flagList.Count == 0) return;
+
+        Flag nextFlag = flagList[0];
+        //StartCoroutine(MovingCoroutine(nextFlag));
+        StartCoroutine("MovingCoroutine", nextFlag);
+        flagList.RemoveAt(0);
+        //flagList.Remove(nextFlag);
+    }
+
+    private void Update()
+    {
+        //Debug.Log(agent.remainingDistance);
+        //Debug.Log(Input.mousePosition);
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (MousePicking(out Flag picFlag))
+            {
+                FlagManager.ClearColors();
+                entryFlag = goalFlag;
+                goalFlag = picFlag;
+                flagList =
+                    FlagManager.PathFinding(entryFlag, goalFlag);
+                //클릭시 깃발 색상
+                picFlag.SetColor(Flag.EState.Select);
+
+                if (flagList == null ||
+                    flagList.Count == 1)
+                {
+                    Debug.LogError("PathFinding Failed!");
+                    return;
+                }
+
+                SetNextFlag();
+            }
+        }
+    }
+
+    //마우스  깃발 클릭
+    private bool MousePicking(out Flag _pickFlag)
+    {
+        _pickFlag = null;
+        Vector3 mousePos = Input.mousePosition;
+        Ray ray =
+            Camera.main.ScreenPointToRay(mousePos);
+        RaycastHit hitInfo;
+
+        if (Physics.Raycast(ray, out hitInfo))
+        {
+            //Debug.Log(
+            //    hitInfo.transform.name +
+            //    ": " + hitInfo.point);
+            if (hitInfo.collider.CompareTag("Flag"))
+            {
+                _pickFlag = hitInfo.collider.gameObject.GetComponent<Flag>();
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+{% endhighlight %}
+
+깃발
+{% highlight c %}
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Flag : MonoBehaviour
+{
+    public enum EState { Normal, Select, Passed }
+
+    [SerializeField]
+    private MeshRenderer flagMr = null;
+
+    [SerializeField]
+    private List<Flag> nextFlagList = new List<Flag>();
+
+
+    public void SetColor(EState _state)
+    {
+        switch (_state)
+        {
+            case EState.Normal:
+                flagMr.material.SetColor(
+                    "_Color", Color.white);
+                break;
+            case EState.Select:
+                flagMr.material.SetColor(
+                    "_Color", Color.red);
+                break;
+            case EState.Passed:
+                flagMr.material.SetColor(
+                    "_Color", Color.yellow);
+                break;
+        }
+    }
+
+
+    public Flag[] GetNextFlags()
+    {
+        return nextFlagList.ToArray();
+    }
+
+}
+
+{% endhighlight %}
+깃발 매니저
+{% highlight c %}
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class FlagManager : MonoBehaviour
+{
+    private static Flag[] flags;
+
+    private void Awake()
+    {
+        flags = GetComponentsInChildren<Flag>();
+
+        //깃발 갯수
+        int N = flags.Length;
+        adj = new float[N, N];
+        //adj = 인접한 노드간의 거리를 저장하는것
+        // 2중 for문으로 adj를 전부 INF로 초기화
+        for (int i = 0; i < N; ++i)
+        {
+            for(int j = 0; j < N; ++j)
+            {   
+                //INF 무한
+                adj[i, j] = INF;
+            }
+        }
+        
+        for (int i = 0; i < N; ++i)
+        {
+            //자기 자신과의 거리는 0
+            adj[i, i] = 0f;
+            // 각 flags마다 닿을 수 있는 flag의 거리를 저장
+            Flag curFlag = flags[i];
+            //현재 확인중인 깃발
+            Flag[] nextFlags = curFlag.GetNextFlags();
+            //현재 확인중인 깃발과 직접 연결된 깃발들
+            for (int j = 0; j < nextFlags.Length; ++j)
+            {
+                //두 깃발 거리
+                float dist = Vector3.Distance(curFlag.transform.position, nextFlags[j].transform.position);
+                
+                // nextFlag[j]와 curFlag의 거리를 구해서 adj에 저장
+                adj[i, GetIndex(nextFlags[j])] = dist;
+            }
+        }
+        /*
+        for (int i = 0; i < N; ++i)
+        {
+            string t = "";
+            for (int j = 0; j < N; ++j)
+            {
+                t += adj[i, j] + " ";
+            }
+            Debug.Log(t);
+        }
+        */
+    }
+
+    //깃발의 인덱스 구하기
+    private static int GetIndex(Flag flag)
+    {
+        for (int i = 0; i < flags.Length; ++i)
+            if (flags[i] == flag) return i;
+        return -1;
+    }
+
+
+    private const float INF = 1000000f;
+    private static float[,] adj;
+
+    // !! 과제 !!
+    // 다익스트라 dijkstra
+    public static List<Flag> PathFinding(
+        Flag _entryFlag, Flag _goalFlag)
+    {
+        // deep copy adj
+        float[,] a = (float[,])adj.Clone();
+        //N 는 깃발의 갯수
+        int N = flags.Length;
+        //확인 여부
+        bool[] visited = new bool[N];
+        //스타트에서 여기까지 가는 최단거리
+        float[] distance = new float[N];
+        //최단거리를 무한으로 채우기 위한것
+        Array.Fill(distance, INF);
+        //이전 깃발
+        int[] parent = new int[N];
+
+        //시작위치
+        int start = GetIndex(_entryFlag);
+        distance[start] = 0; //자기 자신은 0거리로 만들기 : 최단거리
+        parent[start] = start; //자기 자신의 부모는 자기자신 으로 : 최단경로
+
+        while(true)
+        {
+            //제일 좋은 후보를 찾는다
+
+            //가장 유력한 정점의 거리와 번호를 저장
+            float closet = INF;
+            int now = -1;
+            
+            for(int i = 0; i < N; i++)
+            {
+                //이미 방문한 정점은 스킵
+                if (visited[i])
+                    continue;
+                //아직 발견된적 없거나, 아직 방문하지 않고 거리만 계산한 노드중에서 가장 잚은 노드를 찾아내기 위한 과정
+                if (distance[i] == INF || distance[i] >= closet)
+                    continue;
+
+                closet = distance[i];
+                now = i;
+            }
+
+            //now : 아직 방문하지 않은 노드 중 가장 짧은 거리가 짧은 노드
+            if (now == -1)
+                break;
+            visited[now] = true;
+
+            for (int next = 0; next < N; next++ )
+            {
+                // 연결되지 않은 정점은 스킵한다
+                if (adj[now, next] == -1)
+                    continue;
+
+                // 이미 방문한 정점은 스킵
+                if (visited[next])
+                    continue;
+
+                //now : 1  ,
+                //next : 3
+                // 새로 조사된 정점의 최단 거리를 계산한다.
+                //                      15  +  10
+                float nextDist = distance[now] + adj[now, next];
+                // 이전까지 누적해서 계산 했던 노드 길이distance[next]보다,
+                // 현재 계산하고있는 누적 길이(nextDist)가 더 작다면 next Dist 즉 더 짧은 경로로 변경한다
+                if (nextDist < distance[next])
+                {
+                    distance[next] = nextDist;      //해당 노드의 현재 까지 짧은 거리
+                    parent[next] = now;             //해당 노드의 현재까지 짧은 거리의 부모
+
+                    //각 노드에 누적된 거리가 계속 갱신 됨으로 
+                }
+
+            }
+        }
+        // 최단 경로 역추적
+        int end = GetIndex(_goalFlag);
+        List<Flag> path = new();
+        //끝에서부터 지나온 깃발을 경로에 추가
+        while(end != start)
+        {
+            path.Add(flags[end]);
+            end = parent[end];
+        }
+        //시작 깃발을 경로에 추가
+        path.Add(flags[start]);
+        //거꾸로된 경로를 뒤집기
+        path.Reverse();
+
+        return path;
+    }
+
+    //색 초기화
+    public static void ClearColors()
+    {
+        foreach (Flag flag in flags) flag.SetColor(Flag.EState.Normal);
+    }
+}
+{% endhighlight %}
+
+
+
+
+[Real time]: /assets/images/L_48316.jpg
